@@ -36,17 +36,17 @@ class Program
     static byte[] responseBody = Encoding.ASCII.GetBytes(
         "<html><head>Hello World</head><body>Content</body></html>");
 
-    private static SslServerAuthenticationOptions options = new SslServerAuthenticationOptions()
-    {
-        // get our self signed certificate
-        ServerCertificate = new X509Certificate2(ReadWholeStream(Assembly.GetExecutingAssembly()
-            .GetManifestResourceStream("HttpsExampleServer.localhost.p12"))),
-        // this line adds ALPN, critical for HTTP2 over SSL
-        ApplicationProtocols = new List<SslApplicationProtocol>(){SslApplicationProtocol.Http2},
-        ClientCertificateRequired = false,
-        CertificateRevocationCheckMode = X509RevocationMode.NoCheck,
-        EnabledSslProtocols = SslProtocols.Tls12
-    };
+    // private static SslServerAuthenticationOptions options = new SslServerAuthenticationOptions()
+    // {
+    //     // get our self signed certificate
+    //     ServerCertificate = new X509Certificate2(ReadWholeStream(Assembly.GetExecutingAssembly()
+    //         .GetManifestResourceStream("HttpsExampleServer.localhost.p12"))),
+    //     // this line adds ALPN, critical for HTTP2 over SSL
+    //     ApplicationProtocols = new List<SslApplicationProtocol>(){SslApplicationProtocol.Http2},
+    //     ClientCertificateRequired = false,
+    //     CertificateRevocationCheckMode = X509RevocationMode.NoCheck,
+    //     EnabledSslProtocols = SslProtocols.Tls12
+    // };
 
     static byte[] ReadWholeStream(Stream stream)
     {
@@ -125,7 +125,9 @@ class Program
             // Create an SSL stream
             var sslStream = new SslStream(new NetworkStream(clientSocket, true));
             // Authenticate on the stream
-            await sslStream.AuthenticateAsServerAsync(options,CancellationToken.None);
+            var serverCertificate = new X509Certificate2(ReadWholeStream(Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream("HttpsExampleServer.localhost.p12"))); 
+            await sslStream.AuthenticateAsServerAsync(serverCertificate, false, SslProtocols.Tls12, false);
             // wrap the SslStream
             var wrappedStreams = sslStream.CreateStreams();
             // Build a HTTP connection on top of the stream abstraction

@@ -1,3 +1,5 @@
 *.suo
 .vscode
 .vs
+**/bin/
+**/obj/
