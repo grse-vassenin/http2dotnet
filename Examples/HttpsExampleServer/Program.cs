@@ -1,5 +1,8 @@
+using Http2;
+using Http2.Hpack;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,12 +12,7 @@ using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
-using Http2;
-using Http2.Hpack;
 
 class Program
 {
@@ -126,7 +124,7 @@ class Program
             var sslStream = new SslStream(new NetworkStream(clientSocket, true));
             // Authenticate on the stream
             var serverCertificate = new X509Certificate2(ReadWholeStream(Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream("HttpsExampleServer.localhost.p12"))); 
+                .GetManifestResourceStream("HttpsExampleServer.localhost.p12")));
             await sslStream.AuthenticateAsServerAsync(serverCertificate, false, SslProtocols.Tls12, false);
             // wrap the SslStream
             var wrappedStreams = sslStream.CreateStreams();
