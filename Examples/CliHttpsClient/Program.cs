@@ -351,8 +351,8 @@ class Program
         logger.LogInformation($"Starting to connect to {host}:{port}");
         var tcpClient = new TcpClient();
         await tcpClient.ConnectAsync(host, port);
-        tcpClient.Client.NoDelay = true;
         logger.LogInformation("Connected to remote");
+        tcpClient.Client.NoDelay = true;
 
         // Create an SSL stream that will ignore certificate errors
         var sslStream = new SslStream(new NetworkStream(tcpClient.Client, true), false, (sender, cert, chain, err) => true);

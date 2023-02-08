@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "CliHttpsClient": {
-      "commandName": "Project",
-      "commandLineArgs": "http://127.0.0.1:8889"
-    }
-  }
-}
