@@ -15,12 +15,7 @@ class Program
     static void Main(string[] args)
     {
         //this should ignore server certificate validation error
-        System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) =>
-        {
-            int trap = 0;
-            ++trap;
-            return true;
-        };
+        System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
         var p = new Program();
         try
