@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpsExampleServer", "Examp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CliHttpsClient", "Examples\CliHttpsClient\CliHttpsClient.csproj", "{15E320DF-C587-4B2F-89DC-9B87B81184CA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UpgradeHttpsExampleServer", "Examples\UpgradeHttpsExampleServer\UpgradeHttpsExampleServer.csproj", "{06214367-7FB6-4F36-AB06-0466619F045C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -154,6 +156,18 @@ Global
 		{15E320DF-C587-4B2F-89DC-9B87B81184CA}.Release|x64.Build.0 = Release|Any CPU
 		{15E320DF-C587-4B2F-89DC-9B87B81184CA}.Release|x86.ActiveCfg = Release|Any CPU
 		{15E320DF-C587-4B2F-89DC-9B87B81184CA}.Release|x86.Build.0 = Release|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Debug|x64.Build.0 = Debug|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Debug|x86.Build.0 = Debug|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Release|x64.ActiveCfg = Release|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Release|x64.Build.0 = Release|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Release|x86.ActiveCfg = Release|Any CPU
+		{06214367-7FB6-4F36-AB06-0466619F045C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -165,6 +179,7 @@ Global
 		{BD714876-5416-4683-9D23-32194C4A6E30} = {CB2A3DEE-0493-4168-A028-21F9B6455434}
 		{5337F436-D56B-4EA4-9908-C47B48060AA8} = {CB2A3DEE-0493-4168-A028-21F9B6455434}
 		{15E320DF-C587-4B2F-89DC-9B87B81184CA} = {CB2A3DEE-0493-4168-A028-21F9B6455434}
+		{06214367-7FB6-4F36-AB06-0466619F045C} = {CB2A3DEE-0493-4168-A028-21F9B6455434}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E2D9AD50-1A91-4E26-881F-24CA76E9B2AA}
