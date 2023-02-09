@@ -31,6 +31,8 @@ namespace AGZClient
         public async Task<ConnectionWrapper> Build()
         {
             var socket = await EstablishTcpConnection();
+            if (socket == null)
+                return new ConnectionWrapper();
             var sslStream = await Handshake(socket);
             var wrappedStreams = CreateWrappedStreams(sslStream);
             var connectionConfiguration = CreateConnectionConfiguration();
@@ -53,7 +55,14 @@ namespace AGZClient
         private async Task<Socket> EstablishTcpConnection()
         {
             var tcpClient = new TcpClient();
-            await tcpClient.ConnectAsync(_host, _port);
+            try
+            {
+                await tcpClient.ConnectAsync(_host, _port);
+            }
+            catch (Exception)
+            {
+                return await Task.FromResult<Socket>(null);
+            }
             tcpClient.Client.NoDelay = true;
             return tcpClient.Client;
         }
