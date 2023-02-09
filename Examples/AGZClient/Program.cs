@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Http2;
+using System.Threading.Tasks;
 
 namespace AGZClient
 {
@@ -18,6 +19,9 @@ namespace AGZClient
             if (!(connectionWrapper?.IsValid ?? false))
                 return;
             //now we can communicate via connection
+
+            //and finally close the connection
+            await connectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
         }
     }
 }
