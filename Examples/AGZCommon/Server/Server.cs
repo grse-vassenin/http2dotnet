@@ -124,7 +124,7 @@ namespace AGZCommon.Server
                 {
                     new HeaderField {Name = ":method", Value = request.Method},
                     new HeaderField {Name = ":path", Value = request.Path},
-                    new HeaderField { Name = ":scheme", Value = "http" }
+                    new HeaderField { Name = ":scheme", Value = "https" }
                 };
                 var upgradeType = "h2c";
                 foreach (var kvp in request.Headers)

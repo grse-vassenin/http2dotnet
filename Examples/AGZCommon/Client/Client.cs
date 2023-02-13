@@ -24,7 +24,7 @@ namespace AGZCommon.Client
             var headers = new HeaderField[]
             {
                 new HeaderField { Name = ":method", Value = "GET" },
-                new HeaderField { Name = ":scheme", Value = "http" },
+                new HeaderField { Name = ":scheme", Value = "https" },
                 new HeaderField { Name = ":path", Value = path },
                 new HeaderField { Name = ":authority", Value = $"{Host}:{Port}" }
             };
