@@ -1,5 +1,7 @@
-﻿using Http2;
+﻿using AGZCommon.Client;
+using Http2;
 using System.Threading.Tasks;
+
 
 namespace AGZClient
 {

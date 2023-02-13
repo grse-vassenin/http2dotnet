@@ -1,4 +1,5 @@
-﻿using Http2;
+﻿using AGZCommon.Common;
+using Http2;
 using Http2.Hpack;
 using System;
 using System.Linq;
@@ -7,9 +8,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AGZClient
+namespace AGZCommon.Client
 {
-    internal class ConnectionBuilder
+    public class ConnectionBuilder
     {
 
         private string _host;

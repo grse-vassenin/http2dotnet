@@ -7,8 +7,6 @@
     <Compile Include="..\Shared\*.cs" />
     <Compile Remove="..\Shared\Http1Types.cs" />
     <Compile Remove="..\Shared\UpgradeReadStream.cs" />
-    <None Remove="localhost.p12" />
-    <EmbeddedResource Include="localhost.p12" />
     <ProjectReference Include="..\..\Http2\Http2.csproj" />
     <ProjectReference Include="..\..\Hpack\Hpack.csproj" />
     <ProjectReference Include="..\AGZCommon\AGZCommon.csproj" />

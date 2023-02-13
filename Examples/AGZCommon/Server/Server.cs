@@ -1,4 +1,5 @@
-﻿using Http2;
+﻿using AGZCommon.Common;
+using Http2;
 using Http2.Hpack;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AGZServer
+namespace AGZCommon.Server
 {
-    internal class Server
+    public class Server
     {
         public IPAddress Host { get; set; } = IPAddress.Any;
 
@@ -76,7 +77,7 @@ namespace AGZServer
         private async Task<SslStream> Handshake(Socket socket)
         {
             var sslStream = new SslStream(new NetworkStream(socket, true));
-            var serverCertificate = new X509Certificate2(ReadWholeStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("AGZServer.localhost.p12")));
+            var serverCertificate = new X509Certificate2(ReadWholeStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("AGZCommon.localhost.p12")));
             await sslStream.AuthenticateAsServerAsync(serverCertificate, false, SslProtocols.Tls12, false);
             return sslStream;
         }

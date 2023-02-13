@@ -2,9 +2,9 @@
 using System;
 using System.Threading.Tasks;
 
-namespace AGZClient
+namespace AGZCommon.Client
 {
-    internal class Client
+    public class Client
     {
         public string Host { get; set; }
 

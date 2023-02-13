@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AGZServer
+namespace AGZCommon.Server
 {
-    internal static class IncomingStreamHandler
+    public static class IncomingStreamHandler
     {
         public static async Task HandleStream(IStream stream)
         {

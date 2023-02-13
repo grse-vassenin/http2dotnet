@@ -1,8 +1,8 @@
 ﻿using Http2;
 
-namespace AGZClient
+namespace AGZCommon.Client
 {
-    internal class ConnectionWrapper
+    public class ConnectionWrapper
     {
         public bool IsValid { get; set; }
 
