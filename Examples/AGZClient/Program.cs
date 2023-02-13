@@ -19,6 +19,9 @@ namespace AGZClient
             if (!(connectionWrapper?.IsValid ?? false))
                 return;
             //now we can communicate via connection
+            await client.GetRequest(connectionWrapper, "/get1");
+            await client.GetRequest(connectionWrapper, "/get2");
+            await client.GetRequest(connectionWrapper, "/get3");
 
             //and finally close the connection
             await connectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
