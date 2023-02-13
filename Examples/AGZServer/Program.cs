@@ -10,7 +10,8 @@ namespace AGZServer
             var server = new Server()
             {
                 Port = 8889,
-                HandleStreamHandler = IncomingStreamHandler.HandleStream
+                IncominStreamHandler = new IncomingStreamHandler(),
+                CloseConnection = false
             };
             await server.Run();
         }

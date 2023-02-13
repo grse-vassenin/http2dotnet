@@ -22,13 +22,13 @@ namespace AGZCommon.Server
 
         public int Port { get; set; }
 
+        public bool CloseConnection { get; set; }
+
         public Server()
         {
         }
 
-        public delegate Task HandleStreamDelegate(IStream stream);
-
-        public HandleStreamDelegate HandleStreamHandler { get; set; }
+        public IIncomingStreamHandler IncominStreamHandler { get; set; }
 
         public async Task Run()
         {
@@ -41,7 +41,7 @@ namespace AGZCommon.Server
                     .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
                     .Build();
 
-            while (true)
+            while (IncominStreamHandler?.DoTheWork ?? true)
             {
                 var socket = await AcceptSocket(listener);
                 var sslStream = await Handshake(socket);
@@ -52,7 +52,7 @@ namespace AGZCommon.Server
 
         private bool AcceptIncomingStream(IStream stream)
         {
-            var handleStreamTask = Task.Run(() => HandleStreamHandler?.Invoke(stream));
+            var handleStreamTask = Task.Run(() => IncominStreamHandler?.HandleStream(stream));
             return true;
         }
 
@@ -170,7 +170,7 @@ namespace AGZCommon.Server
             var completionTask = Task.Run(async () =>
             {
                 await connection.RemoteGoAwayReason;
-                await connection.GoAwayAsync(ErrorCode.NoError, true);
+                await connection.GoAwayAsync(ErrorCode.NoError, CloseConnection);
             });
         }
     }

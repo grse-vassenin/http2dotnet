@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace AGZCommon.Server
 {
-    public static class IncomingStreamHandler
+    public class IncomingStreamHandler : IIncomingStreamHandler
     {
-        public static async Task HandleStream(IStream stream)
+        public bool DoTheWork { get; set; } = true;
+
+        public async Task HandleStream(IStream stream)
         {
             //do the work - read request and send the answer
             try
@@ -35,8 +37,11 @@ namespace AGZCommon.Server
                 //send response body
                 var responseString = $"<html>{method} + {path}</html>";
                 await stream.WriteAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(responseString)), true);
+
+                if (path == "/quit")
+                    DoTheWork = false;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 stream.Cancel();
             }

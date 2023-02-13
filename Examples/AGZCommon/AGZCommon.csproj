@@ -46,6 +46,7 @@
     <Compile Include="Client\ConnectionBuilder.cs" />
     <Compile Include="Client\ConnectionWrapper.cs" />
     <Compile Include="Common\Http1Types.cs" />
+    <Compile Include="Server\IIncomingStreamHandler.cs" />
     <Compile Include="Server\IncomingStreamHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\Server.cs" />

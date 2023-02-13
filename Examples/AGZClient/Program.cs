@@ -1,5 +1,4 @@
 ﻿using AGZCommon.Client;
-using Http2;
 using System.Threading.Tasks;
 
 
@@ -24,9 +23,21 @@ namespace AGZClient
             await client.GetRequest(connectionWrapper, "/get1");
             await client.GetRequest(connectionWrapper, "/get2");
             await client.GetRequest(connectionWrapper, "/get3");
+
             //and finally close the connection
-            await connectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
+            //await connectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
+            //return;
+
             //or let's switch sides
+            //send special request that will be treated as end
+            await client.GetRequest(connectionWrapper, "/quit");
+            /*await connectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, false);
+            var server = new Server()
+            {
+                Host = IPAddress.Any,
+                Port = 8889,
+                HandleStreamHandler = IncomingStreamHandler.HandleStream
+            };*/
         }
     }
 }

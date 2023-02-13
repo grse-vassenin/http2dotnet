@@ -49,7 +49,9 @@ namespace AGZCommon.Client
             return new ConnectionWrapper()
             {
                 IsValid = true,
-                Connection = connection
+                Connection = connection,
+                ReadableStream = upgradeReadableStream,
+                WritableStream = wrappedStreams.WriteableStream
             };
         }
 
