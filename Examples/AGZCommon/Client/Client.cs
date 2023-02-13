@@ -1,5 +1,6 @@
 ﻿using Http2.Hpack;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AGZCommon.Client
@@ -41,6 +42,7 @@ namespace AGZCommon.Client
                 if (res.EndOfStream)
                     break;
             }
+            Console.WriteLine(Encoding.UTF8.GetString(buffer));
             //read response trailers
             var responseTrailers = await stream.ReadTrailersAsync();
         }
