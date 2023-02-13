@@ -26,6 +26,10 @@ namespace AGZCommon.Server
         {
         }
 
+        public delegate Task HandleStreamDelegate(IStream stream);
+
+        public HandleStreamDelegate HandleStreamHandler { get; set; }
+
         public async Task Run()
         {
             var listener = new TcpListener(Host, Port);
@@ -48,7 +52,7 @@ namespace AGZCommon.Server
 
         private bool AcceptIncomingStream(IStream stream)
         {
-            var handleStreamTask = Task.Run(() => IncomingStreamHandler.HandleStream(stream));
+            var handleStreamTask = Task.Run(() => HandleStreamHandler?.Invoke(stream));
             return true;
         }
 
