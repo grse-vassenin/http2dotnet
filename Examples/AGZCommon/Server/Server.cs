@@ -39,7 +39,7 @@ namespace AGZCommon.Server
             _listener = new TcpListener(Host, Port);
             _listener.Start();
 
-            var config = new ConnectionConfigurationBuilder(true)
+            var connectionConfiguration = new ConnectionConfigurationBuilder(true)
                     .UseStreamListener(AcceptIncomingStream)
                     .UseSettings(Settings.Default)
                     .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
@@ -58,7 +58,7 @@ namespace AGZCommon.Server
                 }
                 var sslStream = await Handshake(socket);
                 var wrappedStreams = sslStream.CreateStreams();
-                await HandleConnection(config, wrappedStreams.ReadableStream, wrappedStreams.WriteableStream);
+                await HandleConnection(connectionConfiguration, wrappedStreams.ReadableStream, wrappedStreams.WriteableStream);
             }
         }
 
@@ -110,7 +110,7 @@ namespace AGZCommon.Server
             "Connection: Upgrade\r\n" +
             $"Upgrade: {upgradeType}\r\n\r\n");
 
-        private async Task HandleConnection(ConnectionConfiguration connnectionConfiguration, IReadableByteStream readableStream, IWriteAndCloseableByteStream writableStream)
+        private async Task HandleConnection(ConnectionConfiguration connectionConfiguration, IReadableByteStream readableStream, IWriteAndCloseableByteStream writableStream)
         {
             //here we want to see that connection is done via http1.1 and first request is upgrade request and do the upgrade
             var upgradeReadStream = new UpgradeReadStream(readableStream);
@@ -179,7 +179,7 @@ namespace AGZCommon.Server
                 return;
             }
             //create a connection
-            var connection = new Connection(connnectionConfiguration, upgradeReadStream, writableStream,
+            var connection = new Connection(connectionConfiguration, upgradeReadStream, writableStream,
                 options: new Connection.Options
                 {
                     ServerUpgradeRequest = upgrade
