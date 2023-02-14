@@ -11,12 +11,8 @@ namespace AGZClient
             //this should ignore server certificate validation error
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-            var client = new Client()
-            {
-                Host = "127.0.0.1",
-                Port = 8889
-            };
-            var connectionWrapper = await client.EstablishConnection();
+            var client = new Client();
+            var connectionWrapper = await client.EstablishConnection("127.0.0.1", 8889);
             if (!(connectionWrapper?.IsValid ?? false))
                 return;
             //now we can communicate via connection

@@ -48,6 +48,8 @@ namespace AGZCommon.Client
             await FinalizeUpgrade(clientUpgradeRequest);
             return new ConnectionWrapper()
             {
+                Host = _host,
+                Port = _port,
                 IsValid = true,
                 Connection = connection,
                 ReadableStream = upgradeReadableStream,

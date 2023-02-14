@@ -6,7 +6,7 @@ namespace AGZCommon.Common
     /// <summary>
     /// A primitive HTTP/1 request header parser
     /// </summary>
-    public class Http1Request
+    class Http1Request
     {
         public string Method;
         public string Path;
@@ -64,7 +64,7 @@ namespace AGZCommon.Common
     /// <summary>
     /// A primitive HTTP/1 response parser
     /// </summary>
-    public class Http1Response
+    class Http1Response
     {
         public string HttpVersion;
         public string StatusCode;

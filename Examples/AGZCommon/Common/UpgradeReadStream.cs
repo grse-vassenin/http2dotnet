@@ -9,7 +9,7 @@ namespace AGZCommon.Common
     /// Wrapper around the readable stream, which allows to read HTTP/1
     /// request headers.
     /// </summary>
-    public class UpgradeReadStream : IReadableByteStream
+    class UpgradeReadStream : IReadableByteStream
     {
         IReadableByteStream stream;
         byte[] httpBuffer = new byte[MaxHeaderLength];

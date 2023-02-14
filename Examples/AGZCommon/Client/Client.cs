@@ -1,4 +1,5 @@
-﻿using Http2.Hpack;
+﻿using AGZCommon.Common;
+using Http2.Hpack;
 using System;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,15 +8,11 @@ namespace AGZCommon.Client
 {
     public class Client
     {
-        public string Host { get; set; }
-
-        public int Port { get; set; }
-
-        public async Task<ConnectionWrapper> EstablishConnection()
+        public async Task<ConnectionWrapper> EstablishConnection(string host, int port)
         {
             return await new ConnectionBuilder()
-                .SetHost(Host)
-                .SetPort(Port)
+                .SetHost(host)
+                .SetPort(port)
                 .Build();
         }
 
@@ -27,7 +24,7 @@ namespace AGZCommon.Client
                 new HeaderField { Name = ":method", Value = "GET" },
                 new HeaderField { Name = ":scheme", Value = "https" },
                 new HeaderField { Name = ":path", Value = path },
-                new HeaderField { Name = ":authority", Value = $"{Host}:{Port}" }
+                new HeaderField { Name = ":authority", Value = $"{connectionWrapper.Host}:{connectionWrapper.Port}" }
             };
             //crate a stream which will also write (send) all headers
             //you can use this stream to send body after headers if you want to do POST
