@@ -16,20 +16,10 @@ namespace AGZCommon.Common
 
         private int _port;
 
-        public ConnectionBuilder SetHost(string host)
+        public async Task<ConnectionWrapper> BuildClientConnection(string host, int port)
         {
             _host = host;
-            return this;
-        }
-
-        public ConnectionBuilder SetPort(int port)
-        {
             _port = port;
-            return this;
-        }
-
-        public async Task<ConnectionWrapper> Build()
-        {
             var socket = await EstablishTcpConnection();
             if (socket == null)
                 return new ConnectionWrapper();
@@ -56,6 +46,23 @@ namespace AGZCommon.Common
             };
         }
 
+        public ConnectionWrapper BuildClientConnection(IReadableByteStream readableStream, IWriteAndCloseableByteStream writableStream)
+        {
+            var connectionConfiguration = new ConnectionConfigurationBuilder(false)
+                    .UseSettings(Settings.Default)
+                    .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
+                    .Build();
+            var connection = new Connection(connectionConfiguration, readableStream, writableStream);
+            return new ConnectionWrapper()
+            {
+                IsValid = true,
+                Connection = connection,
+                ReadableStream = readableStream,
+                WritableStream = writableStream
+            };
+        }
+
+        #region build connection from scratch - connect, handshake, upgrade
         private async Task<Socket> EstablishTcpConnection()
         {
             var tcpClient = new TcpClient();
@@ -139,5 +146,6 @@ namespace AGZCommon.Common
             var stream = await clientUpgradeRequest.UpgradeRequestStream;
             stream.Cancel();
         }
+        #endregion
     }
 }

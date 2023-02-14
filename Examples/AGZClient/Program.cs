@@ -13,9 +13,7 @@ namespace AGZClient
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
             var connectionWrapper = await new ConnectionBuilder()
-                .SetHost("127.0.0.1")
-                .SetPort(8889)
-                .Build();
+                .BuildClientConnection("127.0.0.1", 8889);
             if (!(connectionWrapper?.IsValid ?? false))
                 return;
 
