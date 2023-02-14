@@ -8,14 +8,6 @@ namespace AGZCommon.Client
 {
     public class Client
     {
-        public async Task<ConnectionWrapper> EstablishConnection(string host, int port)
-        {
-            return await new ConnectionBuilder()
-                .SetHost(host)
-                .SetPort(port)
-                .Build();
-        }
-
         public async Task GetRequest(ConnectionWrapper connectionWrapper, string path)
         {
             //create headers
