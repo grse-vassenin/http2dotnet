@@ -24,6 +24,10 @@ namespace AGZCommon.Server
 
         public bool CloseConnection { get; set; }
 
+        private bool _run = true;
+
+        private TcpListener _listener;
+
         public Server()
         {
         }
@@ -32,8 +36,8 @@ namespace AGZCommon.Server
 
         public async Task Run()
         {
-            var listener = new TcpListener(Host, Port);
-            listener.Start();
+            _listener = new TcpListener(Host, Port);
+            _listener.Start();
 
             var config = new ConnectionConfigurationBuilder(true)
                     .UseStreamListener(AcceptIncomingStream)
@@ -41,13 +45,28 @@ namespace AGZCommon.Server
                     .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
                     .Build();
 
-            while (IncominStreamHandler?.DoTheWork ?? true)
+            while (_run)
             {
-                var socket = await AcceptSocket(listener);
+                Socket socket;
+                try
+                {
+                    socket = await AcceptSocket(_listener);
+                }
+                catch (Exception)
+                {
+                    return;
+                }
                 var sslStream = await Handshake(socket);
                 var wrappedStreams = sslStream.CreateStreams();
                 await HandleConnection(config, wrappedStreams.ReadableStream, wrappedStreams.WriteableStream);
             }
+        }
+
+        public void Stop()
+        {
+            _run = false;
+            _listener.Stop();
+
         }
 
         private bool AcceptIncomingStream(IStream stream)

@@ -29,8 +29,6 @@ namespace AGZClient
             //return;
 
             //or let's switch sides
-            //send special request that will be treated as end
-            await client.GetRequest(connectionWrapper, "/quit");
             /*await connectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, false);
             var server = new Server()
             {

@@ -9,8 +9,6 @@ namespace AGZCommon.Server
 {
     public class IncomingStreamHandler : IIncomingStreamHandler
     {
-        public bool DoTheWork { get; set; } = true;
-
         public async Task HandleStream(IStream stream)
         {
             //do the work - read request and send the answer
@@ -37,9 +35,6 @@ namespace AGZCommon.Server
                 //send response body
                 var responseString = $"<html>{method} + {path}</html>";
                 await stream.WriteAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(responseString)), true);
-
-                if (path == "/quit")
-                    DoTheWork = false;
             }
             catch (Exception)
             {
