@@ -1,6 +1,6 @@
 ﻿using Http2;
 using Http2.Hpack;
-using System;
+using System.Threading.Tasks;
 
 namespace AGZCommon.Common.ConnectionBuilders
 {
@@ -10,7 +10,7 @@ namespace AGZCommon.Common.ConnectionBuilders
 
         private IWriteAndCloseableByteStream _writableStream;
 
-        private Func<IStream, bool> _streamListener;
+        private IIncomingStreamHandler _streamHandler;
 
         public StreamsServerConnectionBuilder SetReadableStream(IReadableByteStream readableStream)
         {
@@ -24,16 +24,16 @@ namespace AGZCommon.Common.ConnectionBuilders
             return this;
         }
 
-        public StreamsServerConnectionBuilder SetStreamListener(Func<IStream, bool> streamListener)
+        public StreamsServerConnectionBuilder SetStreamHandler(IIncomingStreamHandler streamHandler)
         {
-            _streamListener = streamListener;
+            _streamHandler = streamHandler;
             return this;
         }
 
         public ConnectionWrapper Build()
         {
             var connectionConfiguration = new ConnectionConfigurationBuilder(true)
-                    .UseStreamListener(_streamListener)
+                    .UseStreamListener(AcceptIncomingStream)
                     .UseSettings(Settings.Default)
                     .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
                     .Build();
@@ -46,5 +46,14 @@ namespace AGZCommon.Common.ConnectionBuilders
                 WritableStream = _writableStream
             };
         }
+
+        private bool AcceptIncomingStream(IStream stream)
+        {
+            if (_streamHandler == null)
+                return false;
+            var handleStreamTask = Task.Run(() => _streamHandler.HandleStream(stream));
+            return true;
+        }
+
     }
 }

@@ -1,7 +1,5 @@
 ﻿using AGZCommon.Common;
 using AGZCommon.Common.ConnectionBuilders;
-using Http2;
-using Http2.Hpack;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -32,12 +30,6 @@ namespace AGZCommon.Server
             _listener = new TcpListener(Host, Port);
             _listener.Start();
 
-            var connectionConfiguration = new ConnectionConfigurationBuilder(true)
-                    .UseStreamListener(AcceptIncomingStream)
-                    .UseSettings(Settings.Default)
-                    .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
-                    .Build();
-
             while (_run)
             {
                 Socket socket;
@@ -51,7 +43,7 @@ namespace AGZCommon.Server
                 }
                 var connectionWrapper = new ListeningServerConnectionBuilder()
                     .SetSocket(socket)
-                    .SetStreamListener(AcceptIncomingStream)
+                    .SetStreamHandler(new IncomingStreamHandler())
                     .SetCloseConnection(false)
                     .Build();
             }
@@ -62,12 +54,6 @@ namespace AGZCommon.Server
             _run = false;
             _listener.Stop();
 
-        }
-
-        private bool AcceptIncomingStream(IStream stream)
-        {
-            var handleStreamTask = Task.Run(() => IncominStreamHandler?.HandleStream(stream));
-            return true;
         }
 
         private async Task<Socket> AcceptSocket(TcpListener listener)

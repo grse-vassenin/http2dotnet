@@ -1,5 +1,6 @@
 ﻿using AGZCommon.Client;
 using AGZCommon.Common.ConnectionBuilders;
+using Http2;
 using System.Threading.Tasks;
 
 
@@ -23,7 +24,7 @@ namespace AGZClient
             await client.GetRequest(connectionWrapper, "/get3");
 
             //and finally close the connection
-            //await connectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
+            await connectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
         }
     }
 }

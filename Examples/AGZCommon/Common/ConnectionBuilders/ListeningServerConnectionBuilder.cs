@@ -18,7 +18,7 @@ namespace AGZCommon.Common.ConnectionBuilders
     {
         private Socket _socket;
 
-        private Func<IStream, bool> _streamListener;
+        private IIncomingStreamHandler _streamHandler;
 
         private bool _closeConnection = true;
 
@@ -28,9 +28,9 @@ namespace AGZCommon.Common.ConnectionBuilders
             return this;
         }
 
-        public ListeningServerConnectionBuilder SetStreamListener(Func<IStream, bool> streamListener)
+        public ListeningServerConnectionBuilder SetStreamHandler(IIncomingStreamHandler streamHandler)
         {
-            _streamListener = streamListener;
+            _streamHandler = streamHandler;
             return this;
         }
 
@@ -47,7 +47,7 @@ namespace AGZCommon.Common.ConnectionBuilders
             var upgradeReadStream = new UpgradeReadStream(wrappedStreams.ReadableStream);
             var upgrade = await Upgrade(upgradeReadStream, wrappedStreams.WriteableStream);
             var connectionConfiguration = new ConnectionConfigurationBuilder(true)
-                .UseStreamListener(_streamListener)
+                .UseStreamListener(AcceptIncomingStream)
                 .UseSettings(Settings.Default)
                 .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
                 .Build();
@@ -83,6 +83,10 @@ namespace AGZCommon.Common.ConnectionBuilders
             await sslStream.AuthenticateAsServerAsync(serverCertificate, false, SslProtocols.Tls12, false);
             return sslStream;
         }
+        private byte[] UpgradeSuccessResponse => Encoding.ASCII.GetBytes(
+            "HTTP/1.1 101 Switching Protocols\r\n" +
+            "Connection: Upgrade\r\n" +
+            $"Upgrade: h2c\r\n\r\n");
 
         private async Task<ServerUpgradeRequest> Upgrade(UpgradeReadStream upgradeReadStream, IWriteAndCloseableByteStream writableStream)
         {
@@ -141,10 +145,13 @@ namespace AGZCommon.Common.ConnectionBuilders
             return upgrade;
         }
 
-        private byte[] UpgradeSuccessResponse => Encoding.ASCII.GetBytes(
-            "HTTP/1.1 101 Switching Protocols\r\n" +
-            "Connection: Upgrade\r\n" +
-            $"Upgrade: h2c\r\n\r\n");
+        private bool AcceptIncomingStream(IStream stream)
+        {
+            if (_streamHandler == null)
+                return false;
+            var handleStreamTask = Task.Run(() => _streamHandler.HandleStream(stream));
+            return true;
+        }
 
         private Connection CreateHttp2Connection(ConnectionConfiguration connectionConfiguration, IReadableByteStream readableStream, IWriteAndCloseableByteStream writableStream, ServerUpgradeRequest upgrade)
         {
