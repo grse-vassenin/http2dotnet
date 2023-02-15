@@ -12,6 +12,8 @@ namespace AGZCommon.Common.ConnectionBuilders
 
         private IIncomingStreamHandler _streamHandler;
 
+        private bool _closeConnection = true;
+
         public StreamsServerConnectionBuilder SetReadableStream(IReadableByteStream readableStream)
         {
             _readableStream = readableStream;
@@ -30,14 +32,15 @@ namespace AGZCommon.Common.ConnectionBuilders
             return this;
         }
 
+        public StreamsServerConnectionBuilder SetCloseConnection(bool closeConnection)
+        {
+            _closeConnection = closeConnection;
+            return this;
+        }
+
         public ConnectionWrapper Build()
         {
-            var connectionConfiguration = new ConnectionConfigurationBuilder(true)
-                    .UseStreamListener(AcceptIncomingStream)
-                    .UseSettings(Settings.Default)
-                    .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
-                    .Build();
-            var connection = new Connection(connectionConfiguration, _readableStream, _writableStream);
+            var connection = CreateHttp2Connection();
             return new ConnectionWrapper()
             {
                 IsValid = true,
@@ -55,5 +58,20 @@ namespace AGZCommon.Common.ConnectionBuilders
             return true;
         }
 
+        private Connection CreateHttp2Connection()
+        {
+            var connectionConfiguration = new ConnectionConfigurationBuilder(true)
+                .UseStreamListener(AcceptIncomingStream)
+                .UseSettings(Settings.Default)
+                .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
+                .Build();
+            var connection = new Connection(connectionConfiguration, _readableStream, _writableStream);
+            var completionTask = Task.Run(async () =>
+            {
+                await connection.RemoteGoAwayReason;
+                await connection.GoAwayAsync(ErrorCode.NoError, _closeConnection);
+            });
+            return connection;
+        }
     }
 }

@@ -23,11 +23,7 @@ namespace AGZCommon.Common.ConnectionBuilders
 
         public ConnectionWrapper Build()
         {
-            var connectionConfiguration = new ConnectionConfigurationBuilder(false)
-                .UseSettings(Settings.Default)
-                .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
-                .Build();
-            var connection = new Connection(connectionConfiguration, _readableStream, _writableStream);
+            var connection = CreateHttp2Connection();
             return new ConnectionWrapper()
             {
                 IsValid = true,
@@ -35,6 +31,15 @@ namespace AGZCommon.Common.ConnectionBuilders
                 ReadableStream = _readableStream,
                 WritableStream = _writableStream
             };
+        }
+
+        private Connection CreateHttp2Connection()
+        {
+            var connectionConfiguration = new ConnectionConfigurationBuilder(false)
+                .UseSettings(Settings.Default)
+                .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
+                .Build();
+            return new Connection(connectionConfiguration, _readableStream, _writableStream);
         }
     }
 }
