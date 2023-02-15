@@ -1,6 +1,8 @@
 ﻿using AGZCommon.Client;
+using AGZCommon.Common;
 using AGZCommon.Common.ConnectionBuilders;
 using Http2;
+using System;
 using System.Threading.Tasks;
 
 
@@ -27,12 +29,17 @@ namespace AGZClient
             await clientConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
 
             //using same connection start listening for something
-            /*var serverConnectionWrapper = new StreamsServerConnectionBuilder()
+            var streamHandler = new IncomingStreamHandler();
+            var serverConnectionWrapper = new StreamsServerConnectionBuilder()
                 .SetReadableStream(clientConnectionWrapper.ReadableStream)
                 .SetWritableStream(clientConnectionWrapper.WritableStream)
-                .SetStreamHandler(new IncomingStreamHandler())
+                .SetStreamHandler(streamHandler)
                 .SetCloseConnection(true)
-                .Build();*/
+                .Build();
+            streamHandler.ConnectionWrapper = serverConnectionWrapper;
+
+            //wait forever?
+            await Task.Run(() => Console.ReadLine());
         }
     }
 }

@@ -46,12 +46,7 @@ namespace AGZCommon.Common.ConnectionBuilders
             var wrappedStreams = sslStream.CreateStreams();
             var upgradeReadStream = new UpgradeReadStream(wrappedStreams.ReadableStream);
             var upgrade = await Upgrade(upgradeReadStream, wrappedStreams.WriteableStream);
-            var connectionConfiguration = new ConnectionConfigurationBuilder(true)
-                .UseStreamListener(AcceptIncomingStream)
-                .UseSettings(Settings.Default)
-                .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
-                .Build();
-            var connection = CreateHttp2Connection(connectionConfiguration, upgradeReadStream, wrappedStreams.WriteableStream, upgrade);
+            var connection = CreateHttp2Connection(upgradeReadStream, wrappedStreams.WriteableStream, upgrade);
             return new ConnectionWrapper()
             {
                 IsValid = true,
@@ -153,8 +148,14 @@ namespace AGZCommon.Common.ConnectionBuilders
             return true;
         }
 
-        private Connection CreateHttp2Connection(ConnectionConfiguration connectionConfiguration, IReadableByteStream readableStream, IWriteAndCloseableByteStream writableStream, ServerUpgradeRequest upgrade)
+        private Connection CreateHttp2Connection(IReadableByteStream readableStream, IWriteAndCloseableByteStream writableStream, ServerUpgradeRequest upgrade)
         {
+            var connectionConfiguration = new ConnectionConfigurationBuilder(true)
+                .UseStreamListener(AcceptIncomingStream)
+                .UseSettings(Settings.Default)
+                .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
+                .Build();
+
             var connection = new Connection(connectionConfiguration, readableStream, writableStream,
                 options: new Connection.Options
                 {

@@ -13,17 +13,9 @@ namespace AGZCommon.Server
 
         public int Port { get; set; }
 
-        public bool CloseConnection { get; set; }
-
         private bool _run = true;
 
         private TcpListener _listener;
-
-        public Server()
-        {
-        }
-
-        public IIncomingStreamHandler IncominStreamHandler { get; set; }
 
         public async Task Run()
         {
@@ -41,11 +33,14 @@ namespace AGZCommon.Server
                 {
                     return;
                 }
-                var connectionWrapper = new ListeningServerConnectionBuilder()
+
+                var streamHandler = new IncomingStreamHandler();
+                var connectionWrapper = await new ListeningServerConnectionBuilder()
                     .SetSocket(socket)
-                    .SetStreamHandler(new IncomingStreamHandler())
+                    .SetStreamHandler(streamHandler)
                     .SetCloseConnection(false)
                     .Build();
+                streamHandler.ConnectionWrapper = connectionWrapper;
             }
         }
 

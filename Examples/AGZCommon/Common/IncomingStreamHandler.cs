@@ -9,6 +9,8 @@ namespace AGZCommon.Common
 {
     public class IncomingStreamHandler : IIncomingStreamHandler
     {
+        public ConnectionWrapper ConnectionWrapper { get; set; }
+
         public async Task HandleStream(IStream stream)
         {
             //do the work - read request and send the answer

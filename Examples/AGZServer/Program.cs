@@ -1,5 +1,4 @@
-﻿using AGZCommon.Common;
-using AGZCommon.Server;
+﻿using AGZCommon.Server;
 using System.Threading.Tasks;
 
 namespace AGZServer
@@ -10,11 +9,10 @@ namespace AGZServer
         {
             var server = new Server()
             {
-                Port = 8889,
-                IncominStreamHandler = new IncomingStreamHandler(),
-                CloseConnection = false
+                Port = 8889
             };
-            await server.Run();
+            var serverRunTask = server.Run();
+            serverRunTask.Wait();
         }
     }
 }
