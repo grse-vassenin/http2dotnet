@@ -1,5 +1,6 @@
 ﻿using AGZCommon.Common;
 using AGZCommon.Common.ConnectionBuilders;
+using Http2;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -34,13 +35,11 @@ namespace AGZCommon.Server
                     return;
                 }
 
-                var streamHandler = new IncomingStreamHandler();
                 var connectionWrapper = await new ListeningServerConnectionBuilder()
                     .SetSocket(socket)
-                    .SetStreamHandler(streamHandler)
+                    .SetStreamHandler(new IncomingStreamHandler())
                     .SetCloseConnection(false)
                     .Build();
-                streamHandler.ConnectionWrapper = connectionWrapper;
             }
         }
 
@@ -56,6 +55,24 @@ namespace AGZCommon.Server
             var socket = await listener.AcceptSocketAsync();
             socket.NoDelay = true;
             return socket;
+        }
+
+        private async Task RevertHandler(ConnectionWrapper serverConnectionWrapper)
+        {
+            //time to create client connection using already existing streams and send some requests there
+            var clientConnectionWrapper = new StreamsClientConnectionBuilder()
+                .SetReadableStream(serverConnectionWrapper.ReadableStream)
+                .SetWritableStream(serverConnectionWrapper.WritableStream)
+                .Build();
+
+            var client = new Client.Client();
+            //communicate
+            await client.GetRequest(clientConnectionWrapper, "/server_get1");
+            await client.GetRequest(clientConnectionWrapper, "/server_get2");
+            await client.GetRequest(clientConnectionWrapper, "/server_get3");
+
+            //and finally close the connection
+            await clientConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
         }
     }
 }

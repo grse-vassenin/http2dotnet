@@ -21,22 +21,20 @@ namespace AGZClient
 
             var client = new Client();
             //now we can communicate via connection
-            await client.GetRequest(clientConnectionWrapper, "/get1");
-            await client.GetRequest(clientConnectionWrapper, "/get2");
-            await client.GetRequest(clientConnectionWrapper, "/get3");
+            await client.GetRequest(clientConnectionWrapper, "/client_get1");
+            await client.GetRequest(clientConnectionWrapper, "/client_get2");
+            await client.GetRequest(clientConnectionWrapper, "/client_get3");
 
             //and finally close the connection
-            await clientConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
+            await clientConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, false);
 
             //using same connection start listening for something
-            var streamHandler = new IncomingStreamHandler();
             var serverConnectionWrapper = new StreamsServerConnectionBuilder()
                 .SetReadableStream(clientConnectionWrapper.ReadableStream)
                 .SetWritableStream(clientConnectionWrapper.WritableStream)
-                .SetStreamHandler(streamHandler)
+                .SetStreamHandler(new IncomingStreamHandler())
                 .SetCloseConnection(true)
                 .Build();
-            streamHandler.ConnectionWrapper = serverConnectionWrapper;
 
             //wait forever?
             await Task.Run(() => Console.ReadLine());
