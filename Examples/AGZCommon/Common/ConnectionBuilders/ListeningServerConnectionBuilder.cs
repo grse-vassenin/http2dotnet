@@ -47,12 +47,18 @@ namespace AGZCommon.Common.ConnectionBuilders
             var upgradeReadStream = new UpgradeReadStream(wrappedStreams.ReadableStream);
             var upgrade = await Upgrade(upgradeReadStream, wrappedStreams.WriteableStream);
             var connection = CreateHttp2Connection(upgradeReadStream, wrappedStreams.WriteableStream, upgrade);
+            var completionTask = Task.Run(async () =>
+            {
+                await connection.RemoteGoAwayReason;
+                await connection.GoAwayAsync(ErrorCode.NoError, _closeConnection);
+            });
             return new ConnectionWrapper()
             {
                 IsValid = true,
                 Connection = connection,
                 ReadableStream = upgradeReadStream,
-                WritableStream = wrappedStreams.WriteableStream
+                WritableStream = wrappedStreams.WriteableStream,
+                CompletionTask = completionTask
             };
         }
 
@@ -161,11 +167,6 @@ namespace AGZCommon.Common.ConnectionBuilders
                 {
                     ServerUpgradeRequest = upgrade
                 });
-            var completionTask = Task.Run(async () =>
-            {
-                await connection.RemoteGoAwayReason;
-                await connection.GoAwayAsync(ErrorCode.NoError, _closeConnection);
-            });
             return connection;
         }
     }

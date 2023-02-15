@@ -1,4 +1,5 @@
 ﻿using Http2;
+using System.Threading.Tasks;
 
 namespace AGZCommon.Common
 {
@@ -15,5 +16,7 @@ namespace AGZCommon.Common
         public IReadableByteStream ReadableStream { get; set; }
 
         public IWriteAndCloseableByteStream WritableStream { get; set; }
+
+        public Task CompletionTask { get; set; }
     }
 }

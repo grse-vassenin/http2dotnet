@@ -35,11 +35,12 @@ namespace AGZCommon.Server
                     return;
                 }
 
-                var connectionWrapper = await new ListeningServerConnectionBuilder()
+                var serverConnectionWrapper = await new ListeningServerConnectionBuilder()
                     .SetSocket(socket)
                     .SetStreamHandler(new IncomingStreamHandler())
                     .SetCloseConnection(false)
                     .Build();
+                var revertTask = RevertHandler(serverConnectionWrapper);
             }
         }
 
@@ -59,6 +60,10 @@ namespace AGZCommon.Server
 
         private async Task RevertHandler(ConnectionWrapper serverConnectionWrapper)
         {
+            await serverConnectionWrapper.CompletionTask;
+
+            await serverConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, false);
+
             //time to create client connection using already existing streams and send some requests there
             var clientConnectionWrapper = new StreamsClientConnectionBuilder()
                 .SetReadableStream(serverConnectionWrapper.ReadableStream)
