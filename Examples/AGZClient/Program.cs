@@ -9,9 +9,6 @@ namespace AGZClient
     {
         static async Task Main(string[] args)
         {
-            //this should ignore server certificate validation error
-            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
             var connectionWrapper = await new ConnectingClientConnectionBuilder()
                 .SetHost("127.0.0.1")
                 .SetPort(8889)

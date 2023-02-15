@@ -29,6 +29,7 @@ namespace AGZCommon.Common.ConnectionBuilders
 
         public async Task<ConnectionWrapper> Build()
         {
+            AvoidCertificateErrors();
             var socket = await EstablishTcpConnection();
             if (socket == null)
                 return new ConnectionWrapper();
@@ -53,6 +54,12 @@ namespace AGZCommon.Common.ConnectionBuilders
                 ReadableStream = upgradeReadableStream,
                 WritableStream = wrappedStreams.WriteableStream
             };
+        }
+
+        private void AvoidCertificateErrors()
+        {
+            //this should ignore server certificate validation error
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
         }
 
         private async Task<Socket> EstablishTcpConnection()
