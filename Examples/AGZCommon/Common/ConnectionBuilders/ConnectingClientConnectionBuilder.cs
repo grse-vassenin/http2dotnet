@@ -7,19 +7,28 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AGZCommon.Common
+namespace AGZCommon.Common.ConnectionBuilders
 {
-    public class ConnectionBuilder
+    public class ConnectingClientConnectionBuilder
     {
-
         private string _host;
 
         private int _port;
 
-        public async Task<ConnectionWrapper> BuildClientConnection(string host, int port)
+        public ConnectingClientConnectionBuilder SetHost(string host)
         {
             _host = host;
+            return this;
+        }
+
+        public ConnectingClientConnectionBuilder SetPort(int port)
+        {
             _port = port;
+            return this;
+        }
+
+        public async Task<ConnectionWrapper> Build()
+        {
             var socket = await EstablishTcpConnection();
             if (socket == null)
                 return new ConnectionWrapper();
@@ -46,23 +55,6 @@ namespace AGZCommon.Common
             };
         }
 
-        public ConnectionWrapper BuildClientConnection(IReadableByteStream readableStream, IWriteAndCloseableByteStream writableStream)
-        {
-            var connectionConfiguration = new ConnectionConfigurationBuilder(false)
-                    .UseSettings(Settings.Default)
-                    .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
-                    .Build();
-            var connection = new Connection(connectionConfiguration, readableStream, writableStream);
-            return new ConnectionWrapper()
-            {
-                IsValid = true,
-                Connection = connection,
-                ReadableStream = readableStream,
-                WritableStream = writableStream
-            };
-        }
-
-        #region build connection from scratch - connect, handshake, upgrade
         private async Task<Socket> EstablishTcpConnection()
         {
             var tcpClient = new TcpClient();
@@ -146,6 +138,5 @@ namespace AGZCommon.Common
             var stream = await clientUpgradeRequest.UpgradeRequestStream;
             stream.Cancel();
         }
-        #endregion
     }
 }

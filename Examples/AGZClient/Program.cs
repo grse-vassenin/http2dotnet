@@ -1,5 +1,5 @@
 ﻿using AGZCommon.Client;
-using AGZCommon.Common;
+using AGZCommon.Common.ConnectionBuilders;
 using System.Threading.Tasks;
 
 
@@ -12,8 +12,10 @@ namespace AGZClient
             //this should ignore server certificate validation error
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-            var connectionWrapper = await new ConnectionBuilder()
-                .BuildClientConnection("127.0.0.1", 8889);
+            var connectionWrapper = await new ConnectingClientConnectionBuilder()
+                .SetHost("127.0.0.1")
+                .SetPort(8889)
+                .Build();
             if (!(connectionWrapper?.IsValid ?? false))
                 return;
 

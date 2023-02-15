@@ -43,7 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\Client.cs" />
-    <Compile Include="Common\ConnectionBuilder.cs" />
+    <Compile Include="Common\ConnectionBuilders\ConnectingClientConnectionBuilder.cs" />
+    <Compile Include="Common\ConnectionBuilders\ListeningServerConnectionBuilder.cs" />
+    <Compile Include="Common\ConnectionBuilders\StreamsClientConnectionBuilder.cs" />
+    <Compile Include="Common\ConnectionBuilders\StreamsServerConnectionBuilder.cs" />
     <Compile Include="Common\ConnectionWrapper.cs" />
     <Compile Include="Common\Http1Types.cs" />
     <Compile Include="Common\IIncomingStreamHandler.cs" />
