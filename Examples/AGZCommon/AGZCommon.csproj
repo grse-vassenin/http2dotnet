@@ -68,6 +68,8 @@
   <ItemGroup>
     <EmbeddedResource Include="localhost.p12" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Common\ConnectionBuilders\BaseStreamConnectionBuilder.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

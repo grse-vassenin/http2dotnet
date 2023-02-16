@@ -20,8 +20,6 @@ namespace AGZCommon.Common.ConnectionBuilders
 
         private IIncomingStreamHandler _streamHandler;
 
-        private bool _closeConnection = true;
-
         public ListeningServerConnectionBuilder SetSocket(Socket socket)
         {
             _socket = socket;
@@ -34,12 +32,6 @@ namespace AGZCommon.Common.ConnectionBuilders
             return this;
         }
 
-        public ListeningServerConnectionBuilder SetCloseConnection(bool closeConnection)
-        {
-            _closeConnection = closeConnection;
-            return this;
-        }
-
         public async Task<ConnectionWrapper> Build()
         {
             var sslStream = await Handshake(_socket);
@@ -47,18 +39,11 @@ namespace AGZCommon.Common.ConnectionBuilders
             var upgradeReadStream = new UpgradeReadStream(wrappedStreams.ReadableStream);
             var upgrade = await Upgrade(upgradeReadStream, wrappedStreams.WriteableStream);
             var connection = CreateHttp2Connection(upgradeReadStream, wrappedStreams.WriteableStream, upgrade);
-            var completionTask = Task.Run(async () =>
-            {
-                await connection.RemoteGoAwayReason;
-                await connection.GoAwayAsync(ErrorCode.NoError, _closeConnection);
-            });
             return new ConnectionWrapper()
             {
                 IsValid = true,
                 Connection = connection,
-                ReadableStream = upgradeReadStream,
-                WritableStream = wrappedStreams.WriteableStream,
-                CompletionTask = completionTask
+                SslSteam = sslStream
             };
         }
 
@@ -161,7 +146,6 @@ namespace AGZCommon.Common.ConnectionBuilders
                 .UseSettings(Settings.Default)
                 .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
                 .Build();
-
             var connection = new Connection(connectionConfiguration, readableStream, writableStream,
                 options: new Connection.Options
                 {

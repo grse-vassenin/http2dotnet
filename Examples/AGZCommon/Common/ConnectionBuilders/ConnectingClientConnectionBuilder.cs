@@ -34,7 +34,7 @@ namespace AGZCommon.Common.ConnectionBuilders
             if (socket == null)
                 return new ConnectionWrapper();
             var sslStream = await Handshake(socket);
-            var wrappedStreams = CreateWrappedStreams(sslStream);
+            var wrappedStreams = sslStream.CreateStreams();
             var connectionConfiguration = CreateConnectionConfiguration();
             var clientUpgradeRequest = CreateClientUpgradeRequest(connectionConfiguration);
             var upgradeReadableStream = CreateUpgradeReadableStream(wrappedStreams.ReadableStream);
@@ -47,12 +47,11 @@ namespace AGZCommon.Common.ConnectionBuilders
             await FinalizeUpgrade(clientUpgradeRequest);
             return new ConnectionWrapper()
             {
+                IsValid = true,
                 Host = _host,
                 Port = _port,
-                IsValid = true,
                 Connection = connection,
-                ReadableStream = upgradeReadableStream,
-                WritableStream = wrappedStreams.WriteableStream
+                SslSteam = sslStream
             };
         }
 
@@ -82,11 +81,6 @@ namespace AGZCommon.Common.ConnectionBuilders
             var sslStream = new SslStream(new NetworkStream(socket, true), false, (sender, cert, chain, err) => true);
             await sslStream.AuthenticateAsClientAsync(_host);
             return sslStream;
-        }
-
-        private IoStreamExtensions.CreateStreamsResult CreateWrappedStreams(SslStream stream)
-        {
-            return stream.CreateStreams();
         }
 
         private ConnectionConfiguration CreateConnectionConfiguration()

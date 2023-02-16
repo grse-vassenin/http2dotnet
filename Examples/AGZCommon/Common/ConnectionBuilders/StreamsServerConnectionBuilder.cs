@@ -4,27 +4,9 @@ using System.Threading.Tasks;
 
 namespace AGZCommon.Common.ConnectionBuilders
 {
-    public class StreamsServerConnectionBuilder
+    public class StreamsServerConnectionBuilder : BaseStreamConnectionBuilder
     {
-        private IReadableByteStream _readableStream;
-
-        private IWriteAndCloseableByteStream _writableStream;
-
         private IIncomingStreamHandler _streamHandler;
-
-        private bool _closeConnection = true;
-
-        public StreamsServerConnectionBuilder SetReadableStream(IReadableByteStream readableStream)
-        {
-            _readableStream = readableStream;
-            return this;
-        }
-
-        public StreamsServerConnectionBuilder SetWritableStream(IWriteAndCloseableByteStream writeableStream)
-        {
-            _writableStream = writeableStream;
-            return this;
-        }
 
         public StreamsServerConnectionBuilder SetStreamHandler(IIncomingStreamHandler streamHandler)
         {
@@ -32,21 +14,14 @@ namespace AGZCommon.Common.ConnectionBuilders
             return this;
         }
 
-        public StreamsServerConnectionBuilder SetCloseConnection(bool closeConnection)
-        {
-            _closeConnection = closeConnection;
-            return this;
-        }
-
-        public ConnectionWrapper Build()
+        public override ConnectionWrapper Build()
         {
             var connection = CreateHttp2Connection();
             return new ConnectionWrapper()
             {
                 IsValid = true,
                 Connection = connection,
-                ReadableStream = _readableStream,
-                WritableStream = _writableStream
+                SslSteam = _sslStream
             };
         }
 
@@ -65,12 +40,8 @@ namespace AGZCommon.Common.ConnectionBuilders
                 .UseSettings(Settings.Default)
                 .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
                 .Build();
-            var connection = new Connection(connectionConfiguration, _readableStream, _writableStream);
-            var completionTask = Task.Run(async () =>
-            {
-                await connection.RemoteGoAwayReason;
-                await connection.GoAwayAsync(ErrorCode.NoError, _closeConnection);
-            });
+            var wrappedStreams = _sslStream.CreateStreams();
+            var connection = new Connection(connectionConfiguration, wrappedStreams.ReadableStream, wrappedStreams.WriteableStream);
             return connection;
         }
     }

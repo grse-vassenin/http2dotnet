@@ -3,33 +3,16 @@ using Http2.Hpack;
 
 namespace AGZCommon.Common.ConnectionBuilders
 {
-    public class StreamsClientConnectionBuilder
+    public class StreamsClientConnectionBuilder : BaseStreamConnectionBuilder
     {
-        private IReadableByteStream _readableStream;
-
-        private IWriteAndCloseableByteStream _writableStream;
-
-        public StreamsClientConnectionBuilder SetReadableStream(IReadableByteStream readableStream)
-        {
-            _readableStream = readableStream;
-            return this;
-        }
-
-        public StreamsClientConnectionBuilder SetWritableStream(IWriteAndCloseableByteStream writeableStream)
-        {
-            _writableStream = writeableStream;
-            return this;
-        }
-
-        public ConnectionWrapper Build()
+        public override ConnectionWrapper Build()
         {
             var connection = CreateHttp2Connection();
             return new ConnectionWrapper()
             {
                 IsValid = true,
                 Connection = connection,
-                ReadableStream = _readableStream,
-                WritableStream = _writableStream
+                SslSteam = _sslStream
             };
         }
 
@@ -39,7 +22,8 @@ namespace AGZCommon.Common.ConnectionBuilders
                 .UseSettings(Settings.Default)
                 .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
                 .Build();
-            return new Connection(connectionConfiguration, _readableStream, _writableStream);
+            var wrappedStreams = _sslStream.CreateStreams();
+            return new Connection(connectionConfiguration, wrappedStreams.ReadableStream, wrappedStreams.WriteableStream);
         }
     }
 }
