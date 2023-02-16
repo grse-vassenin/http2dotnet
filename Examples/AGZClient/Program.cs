@@ -35,6 +35,9 @@ namespace AGZClient
 
             Console.WriteLine($"{DateTime.Now.Second} {DateTime.Now.Millisecond} Starting server via socket");
 
+            Console.WriteLine($"{clientConnectionWrapper.SslSteam.CanRead}");
+            Console.WriteLine($"{clientConnectionWrapper.SslSteam.CanWrite}");
+
             Thread.Sleep(1000);
 
             //using same connection start listening for something
@@ -42,6 +45,8 @@ namespace AGZClient
                 .SetStreamHandler(new IncomingStreamHandler())
                 .SetSslStream(clientConnectionWrapper.SslSteam)
                 .Build();
+            Console.WriteLine($"{clientConnectionWrapper.SslSteam.CanRead}");
+            Console.WriteLine($"{clientConnectionWrapper.SslSteam.CanWrite}");
             await serverConnectionWrapper.Connection.RemoteGoAwayReason;
             await serverConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError);
         }
