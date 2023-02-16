@@ -2,6 +2,8 @@
 using AGZCommon.Common;
 using AGZCommon.Common.ConnectionBuilders;
 using Http2;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -24,8 +26,16 @@ namespace AGZClient
             await client.GetRequest(clientConnectionWrapper, "/client_get2");
             await client.GetRequest(clientConnectionWrapper, "/client_get3");
 
+            Console.WriteLine($"{DateTime.Now.Second} {DateTime.Now.Millisecond} Sending GoAway");
+
             //and finally close the connection
-            await clientConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError);
+            await clientConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, false);
+
+            Console.WriteLine($"{DateTime.Now.Second} {DateTime.Now.Millisecond} GoAway finished");
+
+            Console.WriteLine($"{DateTime.Now.Second} {DateTime.Now.Millisecond} Starting server via socket");
+
+            Thread.Sleep(1000);
 
             //using same connection start listening for something
             var serverConnectionWrapper = new StreamsServerConnectionBuilder()

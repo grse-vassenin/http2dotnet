@@ -59,8 +59,12 @@ namespace AGZCommon.Server
 
         private async Task RevertHandler(ConnectionWrapper serverConnectionWrapper)
         {
+            Console.WriteLine($"{DateTime.Now.Second} {DateTime.Now.Millisecond} Waiting for client GoAway");
+
             await serverConnectionWrapper.Connection.RemoteGoAwayReason;
-            await serverConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError);
+            await serverConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, false);
+
+            Console.WriteLine($"{DateTime.Now.Second} {DateTime.Now.Millisecond} Waiting for client GoAway finished");
 
             //time to create client connection using already existing streams and send some requests there
             var clientConnectionWrapper = new StreamsClientConnectionBuilder()
