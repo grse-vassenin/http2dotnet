@@ -80,6 +80,7 @@ namespace CameraServer1
         private async Task<bool> Revert(IReadableByteStream readStream, IWriteAndCloseableByteStream writeStream)
         {
             string fullData = string.Empty;
+            //read request
             while (true)
             {
                 var buffer = new byte[1024];
@@ -91,16 +92,18 @@ namespace CameraServer1
                 {
                     fullData = fullData.Remove(fullData.Length - 4, 4);
                     var request = Http1Request.ParseFrom(fullData);
-                    if (request.Method.ToLower() == "get" &&
+                    if (request.Method.ToLower() != "get" &&
                         request.Headers.ContainsKey("connection") &&
                         request.Headers["connection"].ToLower() == "upgrade" &&
                         request.Headers.ContainsKey("upgrade") &&
                         request.Headers["upgrade"].ToLower() == "h2c-reverse")
-                        return true;
+                        break;
                     return false;
                 }
                 //else read more
             }
+            //reply with 101
+
             return false;
         }
 
