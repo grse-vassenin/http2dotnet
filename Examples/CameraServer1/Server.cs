@@ -1,4 +1,5 @@
 ﻿using Http2;
+using Http2.Hpack;
 using System;
 using System.IO;
 using System.Net;
@@ -120,7 +121,15 @@ namespace CameraServer1
             var wrappedStreams = sslStream.CreateStreams();
             if (!await Revert(wrappedStreams.ReadableStream, wrappedStreams.WriteableStream))
                 return;
+            var connectionConfiguration = new ConnectionConfigurationBuilder(false)
+                .UseSettings(Settings.Default)
+                .UseHuffmanStrategy(HuffmanStrategy.IfSmaller)
+                .Build();
+            var connection = new Connection(connectionConfiguration, wrappedStreams.ReadableStream, wrappedStreams.WriteableStream);
 
+
+
+            //await connection.GoAwayAsync(ErrorCode.NoError, true);
         }
     }
 }
