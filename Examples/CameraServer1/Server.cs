@@ -77,6 +77,11 @@ namespace CameraServer1
             return sslStream;
         }
 
+        private byte[] UpgradeSuccessResponse => Encoding.ASCII.GetBytes(
+            "HTTP/1.1 101 Switching Protocols\r\n" +
+            "Connection: Upgrade\r\n" +
+            "Upgrade: h2c-reverse\r\n\r\n");
+
         private async Task<bool> Revert(IReadableByteStream readStream, IWriteAndCloseableByteStream writeStream)
         {
             string fullData = string.Empty;
@@ -92,7 +97,7 @@ namespace CameraServer1
                 {
                     fullData = fullData.Remove(fullData.Length - 4, 4);
                     var request = Http1Request.ParseFrom(fullData);
-                    if (request.Method.ToLower() != "get" &&
+                    if (request.Method.ToLower() == "get" &&
                         request.Headers.ContainsKey("connection") &&
                         request.Headers["connection"].ToLower() == "upgrade" &&
                         request.Headers.ContainsKey("upgrade") &&
@@ -103,8 +108,8 @@ namespace CameraServer1
                 //else read more
             }
             //reply with 101
-
-            return false;
+            await writeStream.WriteAsync(new ArraySegment<byte>(UpgradeSuccessResponse));
+            return true;
         }
 
         private async Task ProcessSocket(Socket socket)
