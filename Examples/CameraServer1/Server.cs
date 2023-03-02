@@ -85,6 +85,7 @@ namespace CameraServer1
             var soapReply = Encoding.UTF8.GetString(fullBuffer);
             Console.WriteLine("Reply:");
             Console.WriteLine(soapReply);
+            stream.Cancel();
             return soapReply;
 
         }
@@ -114,7 +115,7 @@ namespace CameraServer1
 
         private async Task<SslStream> Handshake(Socket socket)
         {
-            var networkStream = new NetworkStream(socket, true);
+            var networkStream = new NetworkStream(socket, false);
             var sslStream = new SslStream(networkStream);
             var serverCertificate = new X509Certificate2(ReadWholeStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("CameraServer1.localhost.p12")));
             try
@@ -190,7 +191,11 @@ namespace CameraServer1
 
             await SendSoapRequest(connection, "", Port, "/onvif/uplink_service", soapRequest);
 
-            //await connection.GoAwayAsync(ErrorCode.NoError, true);
+            await SendSoapRequest(connection, "", Port, "/onvif/uplink_service", soapRequest);
+
+            await connection.CloseNow();
+
+            socket.Close();
         }
     }
 }
