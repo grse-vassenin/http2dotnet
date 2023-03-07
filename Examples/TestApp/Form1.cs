@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using UplinkLib;
 
 namespace TestApp
@@ -22,14 +21,10 @@ namespace TestApp
             server.ProcessConnectionEvent += OnProcessConnectionEvent;
         }
 
-        private void OnProcessConnectionEvent(ConnectionWrapper connectionWrapper)
+        private async void OnProcessConnectionEvent(ConnectionWrapper connectionWrapper)
         {
-            if (client != null)
-            //why meany connections?
-            {
-                Task closeTaks;
-                closeTaks = client.Close();
-            }
+            if (client != null) //why meany connections?
+                await client.Close();
             client = new UplinkClient()
             {
                 ConnectionWrapper = connectionWrapper
@@ -39,23 +34,22 @@ namespace TestApp
 
         private void runServer_btn_Click(object sender, System.EventArgs e)
         {
-            var serverRunTask = server.Run();
             runServer_btn.Enabled = false;
             stopServer_btn.Enabled = true;
+            var serverRunTask = server.Run();
         }
 
-        private void stopServer_btn_Click(object sender, System.EventArgs e)
+        private async void stopServer_btn_Click(object sender, System.EventArgs e)
         {
-            runServer_btn.Enabled = false;
-            stopServer_btn.Enabled = false;
             if (client != null)
             {
-                sendRequest_btn.Enabled = false;
-                Task closeTaks;
-                closeTaks = client.Close();
+                await client.Close();
                 client = null;
+                sendRequest_btn.Enabled = false;
             }
             server.Stop();
+            runServer_btn.Enabled = true;
+            stopServer_btn.Enabled = false;
         }
 
         private void sendRequest_btn_Click(object sender, System.EventArgs e)

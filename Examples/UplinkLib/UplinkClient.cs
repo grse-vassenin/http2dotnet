@@ -1,4 +1,5 @@
-﻿using Http2.Hpack;
+﻿using Http2;
+using Http2.Hpack;
 using System;
 using System.Linq;
 using System.Text;
@@ -56,7 +57,7 @@ namespace UplinkLib
 
         public async Task Close()
         {
-            await ConnectionWrapper.Connection.CloseNow();
+            await ConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError);
 
             ConnectionWrapper.Socket.Close();
         }
