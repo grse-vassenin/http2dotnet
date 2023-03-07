@@ -111,12 +111,12 @@ namespace UplinkLib
         private async Task<SslStream> Handshake(Socket socket)
         {
             var networkStream = new NetworkStream(socket, false);
-            var sslStream = new SslStream(networkStream);
+            var sslStream = new SslStream(networkStream, false, (sender, certificate, chain, errors) => true);
             var serverCertificate = new X509Certificate2(ReadWholeStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(CertificatePath)));
             try
             {
                 //temporary do not check camera certificate
-                await sslStream.AuthenticateAsServerAsync(serverCertificate, false, SslProtocols.Tls12, false);
+                await sslStream.AuthenticateAsServerAsync(serverCertificate, true, SslProtocols.Tls12, false);
             }
             catch (Exception)
             {
