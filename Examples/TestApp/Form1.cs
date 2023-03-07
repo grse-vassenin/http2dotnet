@@ -52,19 +52,14 @@ namespace TestApp
             stopServer_btn.Enabled = false;
         }
 
-        private void sendRequest_btn_Click(object sender, System.EventArgs e)
+        private async void sendRequest_btn_Click(object sender, System.EventArgs e)
         {
             if (client == null ||
                 requestPath_txt.Text.Length == 0 ||
                 requestBody_txt.Text.Length == 0)
                 return;
-            var replyTask = client.SendSoapRequest(requestPath_txt.Text, requestBody_txt.Text);
-            var replyAwaiter = replyTask.GetAwaiter();
-            replyAwaiter.OnCompleted(() =>
-            {
-                replyBody_txt.Clear();
-                replyBody_txt.Text = replyAwaiter.GetResult();
-            });
+            replyBody_txt.Clear();
+            replyBody_txt.Text = await client.SendSoapRequest(requestPath_txt.Text, requestBody_txt.Text);
         }
     }
 }
