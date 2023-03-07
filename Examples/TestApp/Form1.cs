@@ -1,4 +1,8 @@
-﻿using System.Windows.Forms;
+﻿using System.IO;
+using System.Reflection;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
+using System.Windows.Forms;
 using UplinkLib;
 
 namespace TestApp
@@ -16,9 +20,27 @@ namespace TestApp
             server = new UplinkServer()
             {
                 Port = 7555,
-                CertificatePath = "UplinkLib.localhost.p12"
+                ServerCertificate = new X509Certificate2(ReadWholeStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("TestApp.localhost.p12"))),
+                SslProtocols = SslProtocols.Tls12,
+                ClientCertificateRequired = true,
+                IgnoreClientCertificateErrors = true
             };
             server.ProcessConnectionEvent += OnProcessConnectionEvent;
+        }
+
+        private byte[] ReadWholeStream(Stream stream)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+
+                return ms.ToArray();
+            }
         }
 
         private async void OnProcessConnectionEvent(ConnectionWrapper connectionWrapper)

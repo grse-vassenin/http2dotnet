@@ -190,11 +190,6 @@
     <Compile Include="UplinkServer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="localhost.p12">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Hpack\Hpack.csproj">
       <Project>{f86f63e7-55b2-4776-bf1f-f8affdcf3355}</Project>
       <Name>Hpack</Name>

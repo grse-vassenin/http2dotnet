@@ -1,11 +1,9 @@
 ﻿using Http2;
 using Http2.Hpack;
 using System;
-using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -17,7 +15,13 @@ namespace UplinkLib
     {
         public int Port { get; set; }
 
-        public string CertificatePath { get; set; }
+        public X509Certificate ServerCertificate { get; set; }
+
+        public SslProtocols SslProtocols { get; set; } = SslProtocols.Tls12;
+
+        public bool ClientCertificateRequired { get; set; }
+
+        public bool IgnoreClientCertificateErrors { get; set; }
 
         public delegate void ProcessConnectionDelegate(ConnectionWrapper connectionWrapper);
 
@@ -93,33 +97,22 @@ namespace UplinkLib
             return null;
 
         }
-        private byte[] ReadWholeStream(Stream stream)
-        {
-            byte[] buffer = new byte[16 * 1024];
-            using (MemoryStream ms = new MemoryStream())
-            {
-                int read;
-                while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    ms.Write(buffer, 0, read);
-                }
-
-                return ms.ToArray();
-            }
-        }
 
         private async Task<SslStream> Handshake(Socket socket)
         {
             var networkStream = new NetworkStream(socket, false);
-            var sslStream = new SslStream(networkStream, false, (sender, certificate, chain, errors) => true);
-            var serverCertificate = new X509Certificate2(ReadWholeStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(CertificatePath)));
+            var sslStream = IgnoreClientCertificateErrors
+                ? new SslStream(networkStream, false, (sender, certificate, chain, errors) => true)
+                : new SslStream(networkStream, false);
             try
             {
                 //temporary do not check camera certificate
-                await sslStream.AuthenticateAsServerAsync(serverCertificate, true, SslProtocols.Tls12, false);
+                await sslStream.AuthenticateAsServerAsync(ServerCertificate, ClientCertificateRequired, SslProtocols, false);
             }
             catch (Exception)
             {
+                if (!IgnoreClientCertificateErrors)
+                    throw;
                 return null;
             }
             return sslStream;
