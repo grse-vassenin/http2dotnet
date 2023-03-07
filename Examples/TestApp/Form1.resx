@@ -118,8 +118,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="requestBody_txt.Text" xml:space="preserve">
-    <value>&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;
-&lt;s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:tds=\"http://www.onvif.org/ver10/device/wsdl\" xmlns:tt=\"http://www.onvif.org/ver10/schema\"&gt;
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema"&gt;
   &lt;s:Body&gt;
     &lt;tds:GetServices&gt;
       &lt;tds:IncludeCapability&gt;true&lt;/tds:IncludeCapability&gt;

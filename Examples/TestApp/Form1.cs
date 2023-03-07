@@ -60,25 +60,15 @@ namespace TestApp
 
         private void sendRequest_btn_Click(object sender, System.EventArgs e)
         {
-            var soapRequest =
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
-                "<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:tds=\"http://www.onvif.org/ver10/device/wsdl\" xmlns:tt=\"http://www.onvif.org/ver10/schema\">\r\n" +
-                "<s:Body>\r\n" +
-                "<tds:GetServices>\r\n" +
-                "<tds:IncludeCapability>true</tds:IncludeCapability>\r\n" +
-                "</tds:GetServices>\r\n" +
-                "</s:Body>\r\n" +
-                "</s:Envelope>";
-            replyBody_txt.Clear();
             if (client == null ||
                 requestPath_txt.Text.Length == 0 ||
                 requestBody_txt.Text.Length == 0)
                 return;
-            //var replyTask = client.SendSoapRequest(requestPath_txt.Text, requestBody_txt.Text);
-            var replyTask = client.SendSoapRequest(requestPath_txt.Text, soapRequest);
+            var replyTask = client.SendSoapRequest(requestPath_txt.Text, requestBody_txt.Text);
             var replyAwaiter = replyTask.GetAwaiter();
             replyAwaiter.OnCompleted(() =>
             {
+                replyBody_txt.Clear();
                 replyBody_txt.Text = replyAwaiter.GetResult();
             });
         }
