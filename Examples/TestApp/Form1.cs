@@ -46,7 +46,7 @@ namespace TestApp
         private async void OnProcessConnectionEvent(ConnectionWrapper connectionWrapper)
         {
             if (client != null) //why meany connections?
-                await client.Close();
+                return;
             client = new UplinkClient()
             {
                 ConnectionWrapper = connectionWrapper
