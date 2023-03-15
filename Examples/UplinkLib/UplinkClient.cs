@@ -50,14 +50,14 @@ namespace UplinkLib
                 if (offset >= contentLength)
                     break;
             }
+            await stream.ReadTrailersAsync();
             var soapReply = Encoding.UTF8.GetString(fullBuffer);
-            stream.Cancel();
             return soapReply;
         }
 
         public async Task Close()
         {
-            await ConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError);
+            await ConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
 
             ConnectionWrapper.Socket.Close();
         }
