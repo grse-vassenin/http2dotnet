@@ -100,7 +100,7 @@ namespace UplinkLib
 
         private async Task<SslStream> Handshake(Socket socket)
         {
-            var networkStream = new NetworkStream(socket, false);
+            var networkStream = new NetworkStream(socket);
             var sslStream = IgnoreClientCertificateErrors
                 ? new SslStream(networkStream, false, (sender, certificate, chain, errors) => true)
                 : new SslStream(networkStream, false);
@@ -173,7 +173,6 @@ namespace UplinkLib
             var connection = new Connection(connectionConfiguration, wrappedStreams.ReadableStream, wrappedStreams.WriteableStream);
             var connectionWrapper = new ConnectionWrapper()
             {
-                Socket = socket,
                 Host = string.Empty,
                 Port = Port,
                 Connection = connection

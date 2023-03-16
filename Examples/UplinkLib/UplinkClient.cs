@@ -58,8 +58,6 @@ namespace UplinkLib
         public async Task Close()
         {
             await ConnectionWrapper.Connection.GoAwayAsync(ErrorCode.NoError, true);
-
-            ConnectionWrapper.Socket.Close();
         }
     }
 }
