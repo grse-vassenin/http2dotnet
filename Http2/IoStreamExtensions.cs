@@ -78,6 +78,7 @@ namespace Http2
 
             public Task CloseAsync()
             {
+                stream.Close();
                 stream.Dispose();
                 return Task.CompletedTask;
             }

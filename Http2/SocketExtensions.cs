@@ -165,6 +165,7 @@ namespace Http2
 
             public Task CloseAsync()
             {
+                socket.Close();
                 socket.Dispose();
                 return Task.CompletedTask;
             }
